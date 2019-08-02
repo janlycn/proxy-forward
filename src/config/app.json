@@ -1,0 +1,15 @@
+{
+  "extractInterval": "*/5 * * * * ?",
+  "minValid": 2,
+
+  "validUrl": "https://httpbin.org/ip",
+  "validTimeout": 5000,
+
+  "validInterval": "*/5 * * * * ?",
+  "validExtractInterval": "*/5 * * * * ?",
+
+  "squidBinPath": "/usr/sbin/squid",
+  "squidConfigPath": "/etc/squid/squid.conf",
+  "squidConfigTplPath": "/etc/squid/squid.conf.tpl",
+  "updateSquidConfigInterval": "*/2 * * * * ?"
+}

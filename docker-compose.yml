@@ -1,0 +1,10 @@
+version: "2.0"
+services:
+  pf:
+    build: .
+    command: sh run.sh
+    volumes:
+      - .:/proxy-forword
+    ports:
+      - "3010:3010"
+      - "3009:3009"
