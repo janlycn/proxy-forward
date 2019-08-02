@@ -19,8 +19,7 @@ RUN sed -i 's/http_access deny all/#http_access deny all/g' /etc/squid/squid.con
 
 COPY . /proxy-forword
 WORKDIR /proxy-forword
-RUN npm config set registry http://registry.npm.taobao.org && npm i -g typescript pm2
-RUN rm -rf node_modules && npm ci
+RUN rm -rf node_modules
+RUN npm config set registry http://registry.npm.taobao.org && npm i -g typescript pm2 && npm ci
 
 EXPOSE 3009 3010
-# CMD ["/bin/bash"]
