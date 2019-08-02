@@ -34,4 +34,4 @@ app.get('/extract', function(_, res) {
   }
 });
 
-app.listen(3009, '0.0.0.0');
+app.listen(3009);
