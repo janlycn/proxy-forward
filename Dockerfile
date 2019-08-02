@@ -15,7 +15,7 @@ RUN sed -i 's/http_access deny all/#http_access deny all/g' /etc/squid/squid.con
     && echo 'http_access allow auth_user'>>/etc/squid/squid.conf \
     && echo 'http_access deny all'>>/etc/squid/squid.conf \
     && cp /etc/squid/squid.conf /etc/squid/squid.conf.tpl \
-    && htpasswd -bc /etc/squid/passwd johnlee fasd1234sDFsdfafdfad54364DSf234d23d2342d2342
+    && htpasswd -bc /etc/squid/passwd johnlee fdas1234sDFthjbytert54y364DSf234d23d890B
 
 COPY . /proxy-forword
 WORKDIR /proxy-forword
