@@ -27,7 +27,10 @@ export class Scheduler {
   }
 
   startExtractorJob() {
+    let running = false;
     this.extractorJob = nodeSchedule.scheduleJob(appConfig.extractInterval, function() {
+      if(running) return;
+      running = true;
       if (appConfig.minValid && appConfig.minValid > 0) {
         const validKeys = validProxyCache.keys();
         if (validKeys && validKeys.length >= appConfig.minValid) {
@@ -49,7 +52,10 @@ export class Scheduler {
   }
 
   startValidationExtractJob() {
+    let running = false;
     this.validationExtractJob = nodeSchedule.scheduleJob(appConfig.validExtractInterval, function() {
+      if(running) return;
+      running = true;
       const keys = extractProxyCache.keys() || [];
       console.log(chalk.yellow(`待验证代理数：${keys.length}`));
       keys.forEach(async key => {
@@ -64,7 +70,10 @@ export class Scheduler {
   }
 
   startValidationJob() {
+    let running = false;
     this.validationJob = nodeSchedule.scheduleJob(appConfig.validInterval, function() {
+      if(running) return;
+      running = true;
       const keys = validProxyCache.keys() || [];
       console.log(chalk.red(`有效代理数：${keys.length}`));
       keys.forEach(async key => {
@@ -78,7 +87,10 @@ export class Scheduler {
   }
 
   startUpdateSquidConfigJob() {
+    let running = false;
     this.updateSquidConfigJob = nodeSchedule.scheduleJob(appConfig.updateSquidConfigInterval, function() {
+      if(running) return;
+      running = true;
       const updated = squidClient.updateConfig();
       if(updated) {
         console.log(chalk.redBright('更新squid配置'));

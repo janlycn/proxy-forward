@@ -8,7 +8,7 @@ class ValidProxyCache extends cache.Cache<string, ValidProxy> {
 
   constructor() {
     super();
-    this.time = 10 * 60 * 1000;
+    this.time = 2 * 60 * 1000;
   }
 
   putOne(proxy: ValidProxy) {
