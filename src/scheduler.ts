@@ -15,6 +15,7 @@ export class Scheduler {
   private validationExtractJob: any;
   private validationJob: any;
   private updateSquidConfigJob: any;
+  private inUpdateConf: boolean = false;
 
   constructor() {}
 
@@ -28,74 +29,112 @@ export class Scheduler {
 
   startExtractorJob() {
     let running = false;
-    this.extractorJob = nodeSchedule.scheduleJob(appConfig.extractInterval, function() {
-      if(running) return;
+    this.extractorJob = nodeSchedule.scheduleJob(appConfig.extractInterval, () => {
+      if (running) return;
       running = true;
-      if (appConfig.minValid && appConfig.minValid > 0) {
-        const validKeys = validProxyCache.keys();
-        if (validKeys && validKeys.length >= appConfig.minValid) {
-          return;
-        }
-      }
-      // xdaili
-      if (extractorConfig.xdaili.enable) {
-        xdailiExtractor.fetch().then(proxys => {
-          if (proxys && proxys.length) {
-            proxys.forEach(proxy => {
-              console.log(chalk.white(`提取代理：${extractProxyCache.generateKey(proxy)}`));
-              extractProxyCache.putOne(proxy);
-            });
+      try {
+        if (appConfig.minValid && appConfig.minValid > 0) {
+          const validKeys = validProxyCache.keys();
+          if (validKeys && validKeys.length >= appConfig.minValid) {
+            return;
           }
-        });
+        }
+        // xdaili
+        if (extractorConfig.xdaili.enable) {
+          xdailiExtractor.fetch().then(proxys => {
+            if (proxys && proxys.length) {
+              proxys.forEach(proxy => {
+                console.log(chalk.white(`提取代理：${extractProxyCache.generateKey(proxy)}`));
+                extractProxyCache.putOne(proxy);
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        running = false;
       }
     });
   }
 
   startValidationExtractJob() {
     let running = false;
-    this.validationExtractJob = nodeSchedule.scheduleJob(appConfig.validExtractInterval, function() {
-      if(running) return;
+    this.validationExtractJob = nodeSchedule.scheduleJob(appConfig.validExtractInterval, () => {
+      if (running) return;
       running = true;
-      const keys = extractProxyCache.keys() || [];
-      console.log(chalk.yellow(`待验证代理数：${keys.length}`));
-      keys.forEach(async key => {
-        const proxy = extractProxyCache.get(key);
-        extractProxyCache.del(key);
-        const validProxy = await generalValidator.validation(proxy);
-        if (validProxy) {
-          validProxyCache.putOne(validProxy);
-        }
-      });
+      try {
+        const keys = extractProxyCache.keys() || [];
+        console.log(chalk.yellow(`待验证代理数：${keys.length}`));
+        keys.forEach(async key => {
+          const proxy = extractProxyCache.get(key);
+          extractProxyCache.del(key);
+          const validProxy = await generalValidator.validation(proxy);
+          if (validProxy) {
+            validProxyCache.putOne(validProxy);
+            this._updateConf();
+          }
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        running = false;
+      }
     });
   }
 
   startValidationJob() {
     let running = false;
-    this.validationJob = nodeSchedule.scheduleJob(appConfig.validInterval, function() {
-      if(running) return;
+    this.validationJob = nodeSchedule.scheduleJob(appConfig.validInterval, () => {
+      if (running) return;
       running = true;
-      const keys = validProxyCache.keys() || [];
-      console.log(chalk.red(`有效代理数：${keys.length}`));
-      keys.forEach(async key => {
-        const proxy = validProxyCache.get(key);
-        const validProxy = await generalValidator.validation(proxy);
-        if (!validProxy) {
-          validProxyCache.del(key);
-        }
-      });
+      try {
+        const keys = validProxyCache.keys() || [];
+        console.log(chalk.red(`有效代理数：${keys.length}`));
+        keys.forEach(async key => {
+          const proxy = validProxyCache.get(key);
+          const validProxy = await generalValidator.validation(proxy);
+          if (!validProxy) {
+            validProxyCache.del(key);
+            this._updateConf();
+          }
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        running = false;
+      }
     });
   }
 
   startUpdateSquidConfigJob() {
     let running = false;
-    this.updateSquidConfigJob = nodeSchedule.scheduleJob(appConfig.updateSquidConfigInterval, function() {
-      if(running) return;
+    this.updateSquidConfigJob = nodeSchedule.scheduleJob(appConfig.updateSquidConfigInterval, () => {
+      if (running) return;
       running = true;
-      const updated = squidClient.updateConfig();
-      if(updated) {
-        console.log(chalk.redBright('更新squid配置'));
+      try {
+        this._updateConf();
+      } catch (e) {
+        console.error(e);
+      } finally {
+        running = false;
       }
     });
+  }
+
+  async _updateConf() {
+    if (this.inUpdateConf) return;
+    this.inUpdateConf = true;
+    try {
+      const updated = await squidClient.updateConfig();
+      if (updated) {
+        console.log(chalk.redBright('更新squid配置'));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.inUpdateConf = false;
+    }
   }
 
   stop() {

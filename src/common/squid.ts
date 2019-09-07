@@ -20,7 +20,7 @@ class SquidClient {
 
   constructor() {}
 
-  updateConfig() {
+  updateConfig(): Promise<boolean> {
     const keys = validProxyCache.keys();
     if (!keys || !keys.length) return;
 
@@ -49,14 +49,14 @@ class SquidClient {
     tpl = `${tpl}${os.EOL}${os.EOL}${confs.join(os.EOL)}`;
     fs.writeFileSync(appConfig.squidConfigPath, tpl);
 
-    exec(`${appConfig.squidBinPath} -k reconfigure`, (error) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
+    return new Promise(resolve => {
+      exec(`${appConfig.squidBinPath} -k reconfigure`, error => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+        }
+        resolve(true);
+      });
     });
-
-    return true;
   }
 }
 

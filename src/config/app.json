@@ -11,5 +11,5 @@
   "squidBinPath": "/usr/sbin/squid",
   "squidConfigPath": "/etc/squid/squid.conf",
   "squidConfigTplPath": "/etc/squid/squid.conf.tpl",
-  "updateSquidConfigInterval": "0 */2 * * * ?"
+  "updateSquidConfigInterval": "0 */1 * * * ?"
 }
