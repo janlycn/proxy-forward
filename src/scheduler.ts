@@ -8,6 +8,7 @@ import extractProxyCache from './cache/extract-proxy';
 import validProxyCache from './cache/valid-proxy';
 import xdailiExtractor from './extractor/xdaili';
 import xdailiAloneExtractor from './extractor/xdaili-alone';
+import daxiangExtractor from './extractor/daxiang';
 import generalValidator from './validator/general';
 import squidClient from './common/squid';
 
@@ -39,6 +40,9 @@ export class Scheduler {
     }
     if (extractorConfig.xdailiAlone.enable) {
       this.extractorJobs.push(xdailiAloneExtractor.startScheduler());
+    }
+    if (extractorConfig.daxiang.enable) {
+      this.extractorJobs.push(daxiangExtractor.startScheduler());
     }
   }
 

@@ -8,26 +8,28 @@ import { ExtractProxy } from '../common/entry';
 
 // 提取代理
 
-class XDaiLi implements Extractor {
+class Daxiang implements Extractor {
   async fetch() {
     try {
       return new Promise<ExtractProxy[]>((resolve, reject) => {
         request(
           {
-            url: config.xdaili.url,
+            url: config.daxiang.url,
             timeout: 5000,
           },
-          function(error: any, _: any, body: any) {
+          function(error: any, _: any, body: string) {
             if (!error) {
               const proxys: ExtractProxy[] = [];
-              const result = JSON.parse(body);
-              result.ERRORCODE == 0 &&
-                result.RESULT.forEach(proxyObj => {
+              if (body && ~body.indexOf(':')) {
+                const ps = body.split(/\s/);
+                ps.forEach(p => {
+                  const kv = p.split(':');
                   proxys.push({
-                    ip: proxyObj.ip,
-                    port: +proxyObj.port,
+                    ip: kv[0],
+                    port: +kv[1],
                   });
                 });
+              }
               resolve(proxys);
             } else {
               reject('xdaili proxy api error!');
@@ -43,12 +45,11 @@ class XDaiLi implements Extractor {
 
   startScheduler() {
     let running = false;
-    return nodeSchedule.scheduleJob(config.xdaili.extractInterval, () => {
+    return nodeSchedule.scheduleJob(config.daxiang.extractInterval, () => {
       if (running) return;
       running = true;
       try {
-        // xdaili
-        if (config.xdaili.enable) {
+        if (config.daxiang.enable) {
           this.fetch().then(proxys => {
             if (proxys && proxys.length) {
               proxys.forEach(proxy => {
@@ -67,4 +68,4 @@ class XDaiLi implements Extractor {
   }
 }
 
-export default new XDaiLi();
+export default new Daxiang();
