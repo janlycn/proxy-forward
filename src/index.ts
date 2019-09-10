@@ -12,7 +12,7 @@ app.get('/start', function(_, res) {
 });
 
 app.get('/stop', function(_, res) {
-  s.stop();
+  s.stopExtractor();
   res.send('ok!');
 });
 

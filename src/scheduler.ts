@@ -7,14 +7,15 @@ import extractorConfig = require('./config/extractor.json');
 import extractProxyCache from './cache/extract-proxy';
 import validProxyCache from './cache/valid-proxy';
 import xdailiExtractor from './extractor/xdaili';
+import xdailiAloneExtractor from './extractor/xdaili-alone';
 import generalValidator from './validator/general';
 import squidClient from './common/squid';
 
 export class Scheduler {
-  private extractorJob: any;
-  private validationExtractJob: any;
-  private validationJob: any;
-  private updateSquidConfigJob: any;
+  private extractorJobs: nodeSchedule.Job[];
+  private validationExtractJob: nodeSchedule.Job;
+  private validationJob: nodeSchedule.Job;
+  private updateSquidConfigJob: nodeSchedule.Job;
   private inUpdateConf: boolean = false;
 
   constructor() {}
@@ -27,35 +28,18 @@ export class Scheduler {
     this.startUpdateSquidConfigJob();
   }
 
+  startExtractor() {
+    this.stopExtractor();
+    this.startExtractorJob();
+  }
+
   startExtractorJob() {
-    let running = false;
-    this.extractorJob = nodeSchedule.scheduleJob(appConfig.extractInterval, () => {
-      if (running) return;
-      running = true;
-      try {
-        if (appConfig.minValid && appConfig.minValid > 0) {
-          const validKeys = validProxyCache.keys();
-          if (validKeys && validKeys.length >= appConfig.minValid) {
-            return;
-          }
-        }
-        // xdaili
-        if (extractorConfig.xdaili.enable) {
-          xdailiExtractor.fetch().then(proxys => {
-            if (proxys && proxys.length) {
-              proxys.forEach(proxy => {
-                console.log(chalk.white(`提取代理：${extractProxyCache.generateKey(proxy)}`));
-                extractProxyCache.putOne(proxy);
-              });
-            }
-          });
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        running = false;
-      }
-    });
+    if (extractorConfig.xdaili.enable) {
+      this.extractorJobs.push(xdailiExtractor.startScheduler());
+    }
+    if (extractorConfig.xdailiAlone.enable) {
+      this.extractorJobs.push(xdailiAloneExtractor.startScheduler());
+    }
   }
 
   startValidationExtractJob() {
@@ -137,9 +121,19 @@ export class Scheduler {
     }
   }
 
+  stopExtractor() {
+    if (this.extractorJobs && this.extractorJobs.length) {
+      this.extractorJobs.forEach(job => {
+        job.cancel();
+      });
+    }
+  }
+
   stop() {
-    if (this.extractorJob) {
-      this.extractorJob.cancel();
+    if (this.extractorJobs && this.extractorJobs.length) {
+      this.extractorJobs.forEach(job => {
+        job.cancel();
+      });
     }
     if (this.validationExtractJob) {
       this.validationExtractJob.cancel();

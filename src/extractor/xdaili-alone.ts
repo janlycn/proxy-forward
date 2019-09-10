@@ -6,25 +6,24 @@ import { Extractor } from './base';
 import config = require('../config/extractor.json');
 import { ExtractProxy } from '../common/entry';
 
-// 提取代理
+// xdaili独享代理
 
-class XDaiLi implements Extractor {
+class XDaiLiAlone implements Extractor {
   async fetch() {
     try {
       return new Promise<ExtractProxy[]>((resolve, reject) => {
         request(
           {
-            url: config.xdaili.url,
-            timeout: 5000,
+            url: config.xdailiAlone.url,
+            timeout: 20000,
           },
           function(error: any, _: any, body: any) {
             if (!error) {
               const proxys: ExtractProxy[] = [];
-              JSON.parse(body).RESULT.forEach(proxyObj => {
-                proxys.push({
-                  ip: proxyObj.ip,
-                  port: +proxyObj.port,
-                });
+              const result = JSON.parse(body).RESULT;
+              proxys.push({
+                ip: result.wanIp,
+                port: +result.proxyport,
               });
               resolve(proxys);
             } else {
@@ -41,12 +40,12 @@ class XDaiLi implements Extractor {
 
   startScheduler() {
     let running = false;
-    return nodeSchedule.scheduleJob(config.xdaili.extractInterval, () => {
+    return nodeSchedule.scheduleJob(config.xdailiAlone.extractInterval, () => {
       if (running) return;
       running = true;
       try {
-        // xdaili
-        if (config.xdaili.enable) {
+        // xdaili alone
+        if (config.xdailiAlone.enable) {
           this.fetch().then(proxys => {
             if (proxys && proxys.length) {
               proxys.forEach(proxy => {
@@ -65,4 +64,4 @@ class XDaiLi implements Extractor {
   }
 }
 
-export default new XDaiLi();
+export default new XDaiLiAlone();

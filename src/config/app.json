@@ -1,7 +1,4 @@
 {
-  "extractInterval": "*/5 * * * * ?",
-  "minValid": 4,
-
   "validUrl": "https://httpbin.org/ip",
   "validTimeout": 5000,
 
