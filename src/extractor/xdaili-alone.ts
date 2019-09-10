@@ -20,11 +20,12 @@ class XDaiLiAlone implements Extractor {
           function(error: any, _: any, body: any) {
             if (!error) {
               const proxys: ExtractProxy[] = [];
-              const result = JSON.parse(body).RESULT;
-              proxys.push({
-                ip: result.wanIp,
-                port: +result.proxyport,
-              });
+              const result = JSON.parse(body);
+              result.ERRORCODE == 0 &&
+                proxys.push({
+                  ip: result.RESULT.wanIp,
+                  port: +result.RESULT.proxyport,
+                });
               resolve(proxys);
             } else {
               reject('xdaili proxy api error!');
