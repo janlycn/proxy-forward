@@ -13,7 +13,7 @@ import generalValidator from './validator/general';
 import squidClient from './common/squid';
 
 export class Scheduler {
-  private extractorJobs: nodeSchedule.Job[];
+  private extractorJobs: nodeSchedule.Job[] = [];
   private validationExtractJob: nodeSchedule.Job;
   private validationJob: nodeSchedule.Job;
   private updateSquidConfigJob: nodeSchedule.Job;
@@ -130,6 +130,7 @@ export class Scheduler {
       this.extractorJobs.forEach(job => {
         job.cancel();
       });
+      this.extractorJobs = [];
     }
   }
 
@@ -138,6 +139,7 @@ export class Scheduler {
       this.extractorJobs.forEach(job => {
         job.cancel();
       });
+      this.extractorJobs = [];
     }
     if (this.validationExtractJob) {
       this.validationExtractJob.cancel();
