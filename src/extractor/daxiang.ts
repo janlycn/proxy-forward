@@ -23,11 +23,13 @@ class Daxiang implements Extractor {
               if (body && ~body.indexOf(':')) {
                 const ps = body.split(/\s/);
                 ps.forEach(p => {
-                  const kv = p.split(':');
-                  proxys.push({
-                    ip: kv[0],
-                    port: +kv[1],
-                  });
+                  if (p) {
+                    const kv = p.split(':');
+                    proxys.push({
+                      ip: kv[0],
+                      port: +kv[1],
+                    });
+                  }
                 });
               }
               resolve(proxys);
