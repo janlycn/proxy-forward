@@ -60,7 +60,6 @@ export class Scheduler {
           const validProxy = await generalValidator.validation(proxy);
           if (validProxy) {
             validProxyCache.putOne(validProxy);
-            this._updateConf();
           }
         });
       } catch (e) {
@@ -84,7 +83,6 @@ export class Scheduler {
           const validProxy = await generalValidator.validation(proxy);
           if (!validProxy) {
             validProxyCache.del(key);
-            this._updateConf();
           }
         });
       } catch (e) {
