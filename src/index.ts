@@ -5,6 +5,8 @@ import extractProxyCache from './cache/extract-proxy';
 
 const app = express();
 const s = new Scheduler();
+// 默认开启
+s.start();
 
 app.get('/start', function(_, res) {
   s.start();
