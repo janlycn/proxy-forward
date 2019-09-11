@@ -60,6 +60,7 @@ export class Scheduler {
           const validProxy = await generalValidator.validation(proxy);
           if (validProxy) {
             validProxyCache.putOne(validProxy);
+            this._updateConf();
           }
         });
       } catch (e) {
