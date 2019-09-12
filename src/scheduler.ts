@@ -99,21 +99,6 @@ export class Scheduler {
   //   });
   // }
 
-  async _updateConf() {
-    if (this.inUpdateConf) return;
-    this.inUpdateConf = true;
-    try {
-      const updated = await squidClient.updateConfig();
-      if (updated) {
-        console.log(chalk.redBright('更新squid配置'));
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.inUpdateConf = false;
-    }
-  }
-
   stopExtractorJobs() {
     if (this.extractorJobs && this.extractorJobs.length) {
       this.extractorJobs.forEach(job => {
@@ -139,6 +124,21 @@ export class Scheduler {
     // if (this.updateSquidConfigJob) {
     //   this.updateSquidConfigJob.cancel();
     // }
+  }
+
+  async _updateConf() {
+    if (this.inUpdateConf) return;
+    this.inUpdateConf = true;
+    try {
+      const updated = await squidClient.updateConfig();
+      if (updated) {
+        console.log(chalk.redBright('更新squid配置'));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.inUpdateConf = false;
+    }
   }
 }
 
