@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import * as request from 'request';
-import * as nodeSchedule from 'node-schedule';
 import extractProxyCache from '../cache/extract-proxy';
 import { Extractor } from './base';
 import config = require('../config/extractor.json');
 import { ExtractProxy } from '../common/entry';
+import { singleScheduleJob } from '../utils';
 
 // 提取代理
 
@@ -46,26 +46,18 @@ class Daxiang implements Extractor {
   }
 
   startScheduler() {
-    let running = false;
-    return nodeSchedule.scheduleJob(config.daxiang.extractInterval, () => {
-      if (running) return;
-      running = true;
-      try {
-        if (config.daxiang.enable) {
-          this.fetch().then(proxys => {
-            if (proxys && proxys.length) {
-              proxys.forEach(proxy => {
-                console.log(chalk.white(`提取代理：${extractProxyCache.generateKey(proxy)}`));
-                extractProxyCache.putOne(proxy);
-              });
-            }
-          });
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        running = false;
+    return singleScheduleJob(config.daxiang.extractInterval, async done => {
+      if (config.daxiang.enable) {
+        this.fetch().then(proxys => {
+          if (proxys && proxys.length) {
+            proxys.forEach(proxy => {
+              console.log(chalk.white(`提取代理：${extractProxyCache.generateKey(proxy)}`));
+              extractProxyCache.putOne(proxy);
+            });
+          }
+        });
       }
+      done();
     });
   }
 }

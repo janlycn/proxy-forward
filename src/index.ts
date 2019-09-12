@@ -14,7 +14,7 @@ app.get('/start', function(_, res) {
 });
 
 app.get('/stop', function(_, res) {
-  s.stopExtractor();
+  s.stopExtractorJobs();
   res.send('ok!');
 });
 
