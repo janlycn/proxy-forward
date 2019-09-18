@@ -72,7 +72,7 @@ class Scheduler {
                     const key = keys[i];
                     const proxy = valid_proxy_1.default.get(key);
                     const validProxy = yield general_1.default.validation(proxy);
-                    if (!validProxy) {
+                    if (!validProxy && valid_proxy_1.default.keys().length > 1) {
                         valid_proxy_1.default.del(key);
                         yield this._updateConf();
                     }

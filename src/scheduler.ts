@@ -75,13 +75,13 @@ export class Scheduler {
           const key = keys[i];
           const proxy = validProxyCache.get(key);
           const validProxy = await generalValidator.validation(proxy);
-          if (!validProxy) {
+          if (!validProxy && validProxyCache.keys().length > 1) {
             validProxyCache.del(key);
             await this._updateConf();
           }
         }
       }
-      
+
       done();
     });
   }
