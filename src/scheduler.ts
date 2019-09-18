@@ -76,6 +76,7 @@ export class Scheduler {
           const proxy = validProxyCache.get(key);
           const validProxy = await generalValidator.validation(proxy);
           if (!validProxy && validProxyCache.keys().length > 1) {
+            console.log(chalk.red(`更新conf：${keys.length}`));
             validProxyCache.del(key);
             await this._updateConf();
           }
