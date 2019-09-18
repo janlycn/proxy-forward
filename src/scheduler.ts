@@ -70,16 +70,13 @@ export class Scheduler {
     this.validationJob = singleScheduleJob(appConfig.validInterval, async done => {
       const keys = validProxyCache.keys() || [];
       console.log(chalk.red(`有效代理数：${keys.length}`));
-      if (keys.length > 1) {
-        for (let i = 0; i < keys.length; i++) {
-          const key = keys[i];
-          const proxy = validProxyCache.get(key);
-          const validProxy = await generalValidator.validation(proxy);
-          if (!validProxy && validProxyCache.keys().length > 1) {
-            console.log(chalk.red(`更新conf：${keys.length}`));
-            validProxyCache.del(key);
-            await this._updateConf();
-          }
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const proxy = validProxyCache.get(key);
+        const validProxy = await generalValidator.validation(proxy);
+        if (!validProxy) {
+          validProxyCache.del(key);
+          await this._updateConf();
         }
       }
 
@@ -133,9 +130,12 @@ export class Scheduler {
     if (this.inUpdateConf) return;
     this.inUpdateConf = true;
     try {
-      const updated = await squidClient.updateConfig();
-      if (updated) {
-        console.log(chalk.redBright('更新squid配置'));
+      const keys = validProxyCache.keys() || [];
+      if (keys.length) {
+        const updated = await squidClient.updateConfig();
+        if (updated) {
+          console.log(chalk.redBright('更新squid配置'));
+        }
       }
     } catch (e) {
       console.error(e);

@@ -67,16 +67,13 @@ class Scheduler {
         this.validationJob = index_js_1.singleScheduleJob(appConfig.validInterval, (done) => __awaiter(this, void 0, void 0, function* () {
             const keys = valid_proxy_1.default.keys() || [];
             console.log(chalk_1.default.red(`有效代理数：${keys.length}`));
-            if (keys.length > 1) {
-                for (let i = 0; i < keys.length; i++) {
-                    const key = keys[i];
-                    const proxy = valid_proxy_1.default.get(key);
-                    const validProxy = yield general_1.default.validation(proxy);
-                    if (!validProxy && valid_proxy_1.default.keys().length > 1) {
-                        console.log(chalk_1.default.red(`更新conf：${keys.length}`));
-                        valid_proxy_1.default.del(key);
-                        yield this._updateConf();
-                    }
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                const proxy = valid_proxy_1.default.get(key);
+                const validProxy = yield general_1.default.validation(proxy);
+                if (!validProxy) {
+                    valid_proxy_1.default.del(key);
+                    yield this._updateConf();
                 }
             }
             done();
@@ -110,9 +107,12 @@ class Scheduler {
                 return;
             this.inUpdateConf = true;
             try {
-                const updated = yield squid_1.default.updateConfig();
-                if (updated) {
-                    console.log(chalk_1.default.redBright('更新squid配置'));
+                const keys = valid_proxy_1.default.keys() || [];
+                if (keys.length) {
+                    const updated = yield squid_1.default.updateConfig();
+                    if (updated) {
+                        console.log(chalk_1.default.redBright('更新squid配置'));
+                    }
                 }
             }
             catch (e) {
