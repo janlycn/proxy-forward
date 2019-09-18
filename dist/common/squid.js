@@ -8,7 +8,7 @@ const appConfig = require("../config/app.json");
 const valid_proxy_1 = require("../cache/valid-proxy");
 class SquidClient {
     constructor() {
-        this.cachePeerTpl = `cache_peer {ip} parent {port} 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=5 name=proxy-{key}`;
+        this.cachePeerTpl = `cache_peer {ip} parent {port} 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=500 name=proxy-{key}`;
         this.otherConfs = [
             'request_header_access Via deny all',
             'request_header_access X-Forwarded-For deny all',

@@ -8,7 +8,7 @@ import appConfig = require('../config/app.json');
 import validProxyCache from '../cache/valid-proxy';
 
 class SquidClient {
-  readonly cachePeerTpl = `cache_peer {ip} parent {port} 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=5 name=proxy-{key}`;
+  readonly cachePeerTpl = `cache_peer {ip} parent {port} 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=500 name=proxy-{key}`;
   readonly otherConfs = [
     'request_header_access Via deny all',
     'request_header_access X-Forwarded-For deny all',
