@@ -70,16 +70,18 @@ export class Scheduler {
     this.validationJob = singleScheduleJob(appConfig.validInterval, async done => {
       const keys = validProxyCache.keys() || [];
       console.log(chalk.red(`有效代理数：${keys.length}`));
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        const proxy = validProxyCache.get(key);
-        const validProxy = await generalValidator.validation(proxy);
-        if (!validProxy) {
-          validProxyCache.del(key);
-          await this._updateConf();
+      if (keys.length > 1) {
+        for (let i = 0; i < keys.length; i++) {
+          const key = keys[i];
+          const proxy = validProxyCache.get(key);
+          const validProxy = await generalValidator.validation(proxy);
+          if (!validProxy) {
+            validProxyCache.del(key);
+            await this._updateConf();
+          }
         }
       }
-
+      
       done();
     });
   }
