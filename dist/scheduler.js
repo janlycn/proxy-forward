@@ -49,7 +49,6 @@ class Scheduler {
     startValidationExtractJob() {
         this.validationExtractJob = index_js_1.singleScheduleJob(appConfig.validExtractInterval, (done) => __awaiter(this, void 0, void 0, function* () {
             const keys = extract_proxy_1.default.keys() || [];
-            console.log(chalk_1.default.yellow(`待验证代理数：${keys.length}`));
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i];
                 const proxy = extract_proxy_1.default.get(key);
@@ -66,7 +65,6 @@ class Scheduler {
     startValidationJob() {
         this.validationJob = index_js_1.singleScheduleJob(appConfig.validInterval, (done) => __awaiter(this, void 0, void 0, function* () {
             const keys = valid_proxy_1.default.keys() || [];
-            console.log(chalk_1.default.red(`有效代理数：${keys.length}`));
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i];
                 const proxy = valid_proxy_1.default.get(key);

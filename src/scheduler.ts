@@ -50,7 +50,7 @@ export class Scheduler {
   startValidationExtractJob() {
     this.validationExtractJob = singleScheduleJob(appConfig.validExtractInterval, async done => {
       const keys = extractProxyCache.keys() || [];
-      console.log(chalk.yellow(`待验证代理数：${keys.length}`));
+      // console.log(chalk.yellow(`待验证代理数：${keys.length}`));
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         const proxy = extractProxyCache.get(key);
@@ -69,7 +69,7 @@ export class Scheduler {
   startValidationJob() {
     this.validationJob = singleScheduleJob(appConfig.validInterval, async done => {
       const keys = validProxyCache.keys() || [];
-      console.log(chalk.red(`有效代理数：${keys.length}`));
+      // console.log(chalk.red(`有效代理数：${keys.length}`));
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         const proxy = validProxyCache.get(key);
