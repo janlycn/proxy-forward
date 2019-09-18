@@ -1,0 +1,10 @@
+{
+    "validUrl": "https://httpbin.org/ip",
+    "validTimeout": 5000,
+    "validInterval": "*/2 * * * * ?",
+    "validExtractInterval": "*/2 * * * * ?",
+    "squidBinPath": "/usr/sbin/squid",
+    "squidConfigPath": "/etc/squid/squid.conf",
+    "squidConfigTplPath": "/etc/squid/squid.conf.tpl",
+    "updateSquidConfigInterval": "0 */1 * * * ?"
+}
