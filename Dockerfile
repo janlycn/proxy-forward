@@ -19,6 +19,7 @@ RUN sed -i 's/http_access deny all/#http_access deny all/g' /etc/squid/squid.con
 
 COPY . /proxy-forword
 WORKDIR /proxy-forword
+VOLUME [".","/proxy-forword"]
 RUN npm config set registry http://registry.npm.taobao.org \
     && npm i -g pm2 \
     && npm install --production

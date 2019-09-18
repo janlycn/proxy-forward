@@ -3,8 +3,8 @@ services:
   pf:
     build: .
     command: sh run.sh
-    volumes:
-      - .:/proxy-forword
+    # volumes:
+    #   - .:/proxy-forword
     ports:
       - '3010:3010'
       - '127.0.0.1:3009:3009'
