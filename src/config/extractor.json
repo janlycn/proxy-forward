@@ -1,0 +1,17 @@
+{
+  "xdaili": {
+    "url": "",
+    "extractInterval": "0 */2 * * * ?",
+    "enable": true
+  },
+  "xdailiAlone": {
+    "url": "",
+    "extractInterval": "0 */2 * * * ?",
+    "enable": true
+  },
+  "daxiang": {
+    "url": "",
+    "extractInterval": "*/20 * * * * ?",
+    "enable": false
+  }
+}
