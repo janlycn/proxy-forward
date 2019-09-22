@@ -109,7 +109,7 @@ class Scheduler {
                 if (keys.length) {
                     const updated = yield squid_1.default.updateConfig();
                     if (updated) {
-                        console.log(chalk_1.default.redBright('更新squid配置'));
+                        console.log(chalk_1.default.redBright('成功更新squid配置'));
                     }
                 }
             }
