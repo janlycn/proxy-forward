@@ -17,7 +17,6 @@ export class Scheduler {
   private extractorJobs: nodeSchedule.Job[] = [];
   private validationExtractJob: nodeSchedule.Job;
   private validationJob: nodeSchedule.Job;
-  // private updateSquidConfigJob: nodeSchedule.Job;
   private inUpdateConf: boolean = false;
 
   constructor() {}
@@ -27,7 +26,6 @@ export class Scheduler {
     this.startExtractorJobs();
     this.startValidationExtractJob();
     this.startValidationJob();
-    // this.startUpdateSquidConfigJob();
   }
 
   startExtractor() {
@@ -50,7 +48,6 @@ export class Scheduler {
   startValidationExtractJob() {
     this.validationExtractJob = singleScheduleJob(appConfig.validExtractInterval, async done => {
       const keys = extractProxyCache.keys() || [];
-      // console.log(chalk.yellow(`待验证代理数：${keys.length}`));
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         const proxy = extractProxyCache.get(key);
@@ -69,7 +66,6 @@ export class Scheduler {
   startValidationJob() {
     this.validationJob = singleScheduleJob(appConfig.validInterval, async done => {
       const keys = validProxyCache.keys() || [];
-      // console.log(chalk.red(`有效代理数：${keys.length}`));
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         const proxy = validProxyCache.get(key);
@@ -83,21 +79,6 @@ export class Scheduler {
       done();
     });
   }
-
-  // startUpdateSquidConfigJob() {
-  //   let running = false;
-  //   this.updateSquidConfigJob = nodeSchedule.scheduleJob(appConfig.updateSquidConfigInterval, () => {
-  //     if (running) return;
-  //     running = true;
-  //     try {
-  //       this._updateConf();
-  //     } catch (e) {
-  //       console.error(e);
-  //     } finally {
-  //       running = false;
-  //     }
-  //   });
-  // }
 
   stopExtractorJobs() {
     if (this.extractorJobs && this.extractorJobs.length) {
@@ -121,9 +102,6 @@ export class Scheduler {
     if (this.validationJob) {
       this.validationJob.cancel();
     }
-    // if (this.updateSquidConfigJob) {
-    //   this.updateSquidConfigJob.cancel();
-    // }
   }
 
   async _updateConf() {
@@ -134,7 +112,7 @@ export class Scheduler {
       if (keys.length) {
         const updated = await squidClient.updateConfig();
         if (updated) {
-          console.log(chalk.redBright('更新squid配置'));
+          console.log(chalk.redBright('成功更新squid配置'));
         }
       }
     } catch (e) {
