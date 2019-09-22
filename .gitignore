@@ -65,4 +65,4 @@ typings/
 .idea
 .vscode
 
-src/config/extractor.json
+# src/config/extractor.json
